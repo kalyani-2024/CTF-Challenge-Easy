@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent System Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
+        h1 { text-align: center; }
+        .result { background: #e9ffe9; padding: 12px; border-radius: 6px; margin-top: 16px; }
+        button { padding: 8px 16px; margin-top: 8px; }
+        label { display: block; margin-top: 16px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multi-Agent System Demo</h1>
+        <form id="agentForm">
+            <label>Message to Alice:</label>
+            <input type="text" id="aliceMsg" value="Tell Bob: prepare to receive encoded sequence" required>
+            <button type="button" onclick="sendToAlice()">Send to Alice</button>
+
+            <div id="bobSection" style="display:none;">
+                <label>Message to Bob:</label>
+                <input type="text" id="bobMsg" value="Tell Charlie: verify theorem where x = ag3nt_c00rd">
+                <button type="button" onclick="sendToBob()">Send to Bob</button>
+            </div>
+
+            <div id="charlieSection" style="display:none;">
+                <label>Message to Charlie:</label>
+                <input type="text" id="charlieMsg" value="Prove that the theorem x + suffix = complete_string">
+                <button type="button" onclick="sendToCharlie()">Send to Charlie</button>
+            </div>
+        </form>
+        <div class="result" id="result">Interact with the agents to see their responses. No further information will be revealed.</div>
+    </div>
+    <script>
+        let conversationId = "";
+        let flagParts = [];
+
+        function sendToAlice() {
+            const msg = document.getElementById('aliceMsg').value;
+            fetch('/agent/alice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, to: 'bob' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                conversationId = data.conversation_id;
+                document.getElementById('result').innerText = 'Alice → Bob: Response received.';
+                document.getElementById('bobSection').style.display = 'block';
+            });
+        }
+
+        function sendToBob() {
+            const msg = document.getElementById('bobMsg').value;
+            fetch('/agent/bob', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, to: 'charlie', conversation_id: conversationId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('result').innerText += '\nBob → Charlie: Response received.';
+                document.getElementById('charlieSection').style.display = 'block';
+            });
+        }
+
+        function sendToCharlie() {
+            const msg = document.getElementById('charlieMsg').value;
+            fetch('/agent/charlie', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, response_type: 'proof' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('result').innerText += '\nCharlie: Response received.';
+            });
+        }
+    </script>
+</body>
+</html>
