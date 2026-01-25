@@ -50,7 +50,7 @@
             .then(res => res.json())
             .then(data => {
                 conversationId = data.conversation_id;
-                document.getElementById('result').innerText = 'Alice → Bob: Response received.';
+                document.getElementById('result').innerText = ' Response received.';
                 document.getElementById('bobSection').style.display = 'block';
             });
         }
@@ -64,7 +64,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('result').innerText += '\nBob → Charlie: Response received.';
+                document.getElementById('result').innerText += 'Response received.';
                 document.getElementById('charlieSection').style.display = 'block';
             });
         }
@@ -78,7 +78,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('result').innerText += '\nCharlie: Response received.';
+                document.getElementById('result').innerText += 'Response received.';
             });
         }
     </script>
