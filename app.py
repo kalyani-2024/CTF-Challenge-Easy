@@ -138,8 +138,8 @@ def bob():
         # Validate entanglement_id
         if not entanglement_id:
             return jsonify({
-                "error": "entanglement_id required. The quantum connection is broken.",
-                "hint": "You must pass the entanglement_id received from Alice to maintain quantum coherence."
+                "error": "entanglement_id required. The quantum connection is broken."
+                
             }), 400
         
         if not validate_entanglement(entanglement_id):
@@ -166,7 +166,7 @@ def bob():
         if message.strip().lower() != BOB_REQUIRED_MESSAGE.lower():
             return jsonify({
                 "error": "Relay protocol rejected. Invalid verification sequence.",
-                "hint": "Bob requires theorem verification. Think about mathematical proofs involving variables."
+                
             }), 400
         
         # Mark Bob's swap
@@ -202,15 +202,15 @@ def charlie():
         # Validate response type (must be a proof)
         if response_type.lower() != "proof":
             return jsonify({
-                "error": "Measurement failed. Charlie only responds to mathematical proofs.",
-                "hint": "As the observer, Charlie requires response_type='proof' to collapse the wavefunction."
+                "error": "Measurement failed. Charlie only responds to mathematical proofs."
+                
             }), 400
         
         # Validate entanglement_id
         if not entanglement_id:
             return jsonify({
-                "error": "entanglement_id required. Cannot measure without quantum correlation.",
-                "hint": "The entanglement_id must be passed through the entire chain: Alice → Bob → Charlie."
+                "error": "entanglement_id required. Cannot measure without quantum correlation."
+                
             }), 400
         
         if not validate_entanglement(entanglement_id):
@@ -224,14 +224,14 @@ def charlie():
         # Check if the full protocol was followed
         if not session.get("alice_transmitted"):
             return jsonify({
-                "error": "Incomplete quantum chain. Alice's transmission not detected.",
-                "hint": "Quantum states flow linearly: A → B → C. Start with Alice."
+                "error": "Incomplete quantum chain. Alice's transmission not detected."
+                
             }), 400
         
         if not session.get("bob_swapped"):
             return jsonify({
-                "error": "Incomplete quantum chain. Bob's entanglement swap not performed.",
-                "hint": "Quantum states flow linearly: A → B → C. Bob must relay before Charlie can measure."
+                "error": "Incomplete quantum chain. Bob's entanglement swap not performed."
+                
             }), 400
         
         if not message:
@@ -242,8 +242,8 @@ def charlie():
         # Validate the exact message
         if message.strip() != CHARLIE_REQUIRED_MESSAGE:
             return jsonify({
-                "error": "Measurement protocol rejected. Invalid proof statement.",
-                "hint": "Charlie requires a formal proof statement. Think about completing a theorem."
+                "error": "Measurement protocol rejected. Invalid proof statement."
+               
             }), 400
         
         # All conditions met - collapse the wavefunction and reveal the final flag part!
