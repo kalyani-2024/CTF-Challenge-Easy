@@ -28,59 +28,22 @@
             color: #333;
         }
 
-        .agent-section {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .agent-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .agent-label {
-            font-weight: normal;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .agent-label span {
+        .info {
             color: #666;
-            font-size: 0.9em;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
             font-size: 14px;
-            box-sizing: border-box;
-            margin-bottom: 8px;
+            line-height: 1.6;
         }
 
-        button {
-            padding: 6px 16px;
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background: #e0e0e0;
-        }
-
-        .status {
-            margin-top: 20px;
+        .node {
+            margin: 15px 0;
             padding: 10px;
             background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            font-size: 13px;
-            color: #666;
+            border-left: 3px solid #ccc;
+        }
+
+        .node-name {
+            font-weight: bold;
+            color: #333;
         }
 
         .hidden-hint {
@@ -91,83 +54,21 @@
 
 <body>
     <div class="container">
-        <h1>Quantum Relay Controller</h1>
+        <h1>The Entanglement Relay</h1>
+        <p class="info">Quantum Key Recovery System</p>
 
-        <!-- Hidden hints for those who inspect the source -->
+        
         <div class="hidden-hint" data-agent="alice" data-message="prepare to receive encoded sequence" data-to="bob">
         </div>
         <div class="hidden-hint" data-agent="bob" data-message="verify theorem where x = agent" data-to="charlie"></div>
         <div class="hidden-hint" data-agent="charlie" data-message="Prove that the theorem x + suffix = complete_string"
-            data-response-type="proof"></div>
+            ></div>
 
-        <div class="agent-section">
-            <div class="agent-label">Alice: <span>(Source Node)</span></div>
-            <input type="text" id="aliceMsg" placeholder="Enter message...">
-            <button onclick="sendAlice()">Send</button>
+    
         </div>
 
-        <div class="agent-section">
-            <div class="agent-label">Bob: <span>(Repeater Node)</span></div>
-            <input type="text" id="bobMsg" placeholder="Enter message...">
-            <button onclick="sendBob()">Send</button>
-        </div>
-
-        <div class="agent-section">
-            <div class="agent-label">Charlie: <span>(Measurement Node)</span></div>
-            <input type="text" id="charlieMsg" placeholder="Enter message...">
-            <button onclick="sendCharlie()">Send</button>
-        </div>
-
-        <div class="status" id="status">System ready. Use the control protocol to interact with nodes.</div>
+       
     </div>
-
-    <script>
-        let entanglementId = null;
-
-        async function sendAlice() {
-            const msg = document.getElementById('aliceMsg').value;
-            try {
-                const res = await fetch('/agent/alice', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, to: 'bob' })
-                });
-                const data = await res.json();
-                if (data.entanglement_id) entanglementId = data.entanglement_id;
-                document.getElementById('status').textContent = res.ok ? 'Transmission sent.' : 'Transmission failed.';
-            } catch (e) {
-                document.getElementById('status').textContent = 'Network error.';
-            }
-        }
-
-        async function sendBob() {
-            const msg = document.getElementById('bobMsg').value;
-            try {
-                const res = await fetch('/agent/bob', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, to: 'charlie', entanglement_id: entanglementId })
-                });
-                document.getElementById('status').textContent = res.ok ? 'Relay complete.' : 'Relay failed.';
-            } catch (e) {
-                document.getElementById('status').textContent = 'Network error.';
-            }
-        }
-
-        async function sendCharlie() {
-            const msg = document.getElementById('charlieMsg').value;
-            try {
-                const res = await fetch('/agent/charlie', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, response_type: 'proof', entanglement_id: entanglementId })
-                });
-                document.getElementById('status').textContent = res.ok ? 'Measurement complete.' : 'Measurement failed.';
-            } catch (e) {
-                document.getElementById('status').textContent = 'Network error.';
-            }
-        }
-    </script>
 </body>
 
 </html>
