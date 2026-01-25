@@ -16,7 +16,7 @@ def index():
 @app.route("/agent/alice", methods=["POST"])
 def alice():
     data = request.get_json()
-    message = data.get("message", "")
+    message = data.get("message", "prepare to receive encoded sequence")
     to = data.get("to", "")
     if to != "bob":
         return jsonify({"error": "Alice only talks to Bob."}), 400
@@ -35,7 +35,7 @@ def alice():
 @app.route("/agent/bob", methods=["POST"])
 def bob():
     data = request.get_json()
-    message = data.get("message", "")
+    message = data.get("message", "verify theorem where x = agent")
     to = data.get("to", "")
     conv_id = data.get("conversation_id")
     if to != "charlie":
@@ -56,8 +56,8 @@ def bob():
 @app.route("/agent/charlie", methods=["POST"])
 def charlie():
     data = request.get_json()
-    message = data.get("message", "")
-    response_type = data.get("response_type", "")
+    message = data.get("message", "Prove that the theorem x + suffix = complete_string")
+    response_type = data.get("response_type", "proof")
     if response_type != "proof":
         return jsonify({"error": "Charlie only responds to mathematical proofs."}), 400
     # Charlie's suffix
