@@ -43,9 +43,7 @@
         function sendToAlice() {
             const msg = document.getElementById('aliceMsg').value;
             fetch('/agent/alice', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg, to: 'bob' })
+                method: 'POST'
             })
             .then(res => res.json())
             .then(data => {
@@ -58,9 +56,7 @@
         function sendToBob() {
             const msg = document.getElementById('bobMsg').value;
             fetch('/agent/bob', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg, to: 'charlie', conversation_id: conversationId })
+                method: 'POST'
             })
             .then(res => res.json())
             .then(data => {
@@ -72,9 +68,7 @@
         function sendToCharlie() {
             const msg = document.getElementById('charlieMsg').value;
             fetch('/agent/charlie', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg, response_type: 'proof' })
+                method: 'POST'
             })
             .then(res => res.json())
             .then(data => {
