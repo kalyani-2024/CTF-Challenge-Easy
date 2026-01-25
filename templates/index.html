@@ -16,22 +16,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>Multi-Agent System Demo</h1>
+        <h1>Multi-Agent System</h1>
         <form id="agentForm">
-            <label>Message to Alice:</label>
-            <input type="text" id="aliceMsg" value="Tell Bob: prepare to receive encoded sequence" required>
-            <button type="button" onclick="sendToAlice()">Send to Alice</button>
+            <label>Alice:</label>
+            <input type="text" id="aliceMsg" value="prepare to receive encoded sequence" required>
+            <button type="button" onclick="sendToAlice()">Send </button>
 
             <div id="bobSection" style="display:none;">
-                <label>Message to Bob:</label>
-                <input type="text" id="bobMsg" value="Tell Charlie: verify theorem where x = ag3nt_c00rd">
-                <button type="button" onclick="sendToBob()">Send to Bob</button>
+                <label>Bob:</label>
+                <input type="text" id="bobMsg" value="verify theorem where x = ag3nt_c00rd">
+                <button type="button" onclick="sendToBob()">Send</button>
             </div>
 
             <div id="charlieSection" style="display:none;">
-                <label>Message to Charlie:</label>
+                <label>Charlie:</label>
                 <input type="text" id="charlieMsg" value="Prove that the theorem x + suffix = complete_string">
-                <button type="button" onclick="sendToCharlie()">Send to Charlie</button>
+                <button type="button" onclick="sendToCharlie()">Mission Accomplished</button>
             </div>
         </form>
         <div class="result" id="result">Interact with the agents to see their responses. No further information will be revealed.</div>
