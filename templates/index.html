@@ -1,80 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Agent System Demo</title>
+    <title>The Entanglement Relay</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
-        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
-        h1 { text-align: center; }
-        .result { background: #e9ffe9; padding: 12px; border-radius: 6px; margin-top: 16px; }
-        button { padding: 8px 16px; margin-top: 8px; }
-        label { display: block; margin-top: 16px; }
-        input, textarea { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #ccc; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .agent-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .agent-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .agent-label {
+            font-weight: normal;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .agent-label span {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+
+        button {
+            padding: 6px 16px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #e0e0e0;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .hidden-hint {
+            display: none;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Multi-Agent System</h1>
-        <form id="agentForm">
-            <label>Alice:</label>
-            <input type="text" id="aliceMsg" value="prepare to receive encoded sequence" required>
-            <button type="button" onclick="sendToAlice()">Send </button>
+        <h1>Quantum Relay Controller</h1>
 
-            <div id="bobSection" style="display:none;">
-                <label>Bob:</label>
-                <input type="text" id="bobMsg" value="verify theorem where x = ag3nt_c00rd">
-                <button type="button" onclick="sendToBob()">Send</button>
-            </div>
+        <!-- Hidden hints for those who inspect the source -->
+        <div class="hidden-hint" data-agent="alice" data-message="prepare to receive encoded sequence" data-to="bob">
+        </div>
+        <div class="hidden-hint" data-agent="bob" data-message="verify theorem where x = agent" data-to="charlie"></div>
+        <div class="hidden-hint" data-agent="charlie" data-message="Prove that the theorem x + suffix = complete_string"
+            data-response-type="proof"></div>
 
-            <div id="charlieSection" style="display:none;">
-                <label>Charlie:</label>
-                <input type="text" id="charlieMsg" value="Prove that the theorem x + suffix = complete_string">
-                <button type="button" onclick="sendToCharlie()">Mission Accomplished</button>
-            </div>
-        </form>
-        <div class="result" id="result">Interact with the agents to see their responses. No further information will be revealed.</div>
+        <div class="agent-section">
+            <div class="agent-label">Alice: <span>(Source Node)</span></div>
+            <input type="text" id="aliceMsg" placeholder="Enter message...">
+            <button onclick="sendAlice()">Send</button>
+        </div>
+
+        <div class="agent-section">
+            <div class="agent-label">Bob: <span>(Repeater Node)</span></div>
+            <input type="text" id="bobMsg" placeholder="Enter message...">
+            <button onclick="sendBob()">Send</button>
+        </div>
+
+        <div class="agent-section">
+            <div class="agent-label">Charlie: <span>(Measurement Node)</span></div>
+            <input type="text" id="charlieMsg" placeholder="Enter message...">
+            <button onclick="sendCharlie()">Send</button>
+        </div>
+
+        <div class="status" id="status">System ready. Use the control protocol to interact with nodes.</div>
     </div>
+
     <script>
-        let conversationId = "";
-        let flagParts = [];
+        let entanglementId = null;
 
-        function sendToAlice() {
+        async function sendAlice() {
             const msg = document.getElementById('aliceMsg').value;
-            fetch('/agent/alice', {
-                method: 'POST'
-            })
-            .then(res => res.json())
-            .then(data => {
-                conversationId = data.conversation_id;
-                document.getElementById('result').innerText = ' Response received.';
-                document.getElementById('bobSection').style.display = 'block';
-            });
+            try {
+                const res = await fetch('/agent/alice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, to: 'bob' })
+                });
+                const data = await res.json();
+                if (data.entanglement_id) entanglementId = data.entanglement_id;
+                document.getElementById('status').textContent = res.ok ? 'Transmission sent.' : 'Transmission failed.';
+            } catch (e) {
+                document.getElementById('status').textContent = 'Network error.';
+            }
         }
 
-        function sendToBob() {
+        async function sendBob() {
             const msg = document.getElementById('bobMsg').value;
-            fetch('/agent/bob', {
-                method: 'POST'
-            })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('result').innerText += 'Response received.';
-                document.getElementById('charlieSection').style.display = 'block';
-            });
+            try {
+                const res = await fetch('/agent/bob', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, to: 'charlie', entanglement_id: entanglementId })
+                });
+                document.getElementById('status').textContent = res.ok ? 'Relay complete.' : 'Relay failed.';
+            } catch (e) {
+                document.getElementById('status').textContent = 'Network error.';
+            }
         }
 
-        function sendToCharlie() {
+        async function sendCharlie() {
             const msg = document.getElementById('charlieMsg').value;
-            fetch('/agent/charlie', {
-                method: 'POST'
-            })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('result').innerText += 'Response received.';
-            });
+            try {
+                const res = await fetch('/agent/charlie', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, response_type: 'proof', entanglement_id: entanglementId })
+                });
+                document.getElementById('status').textContent = res.ok ? 'Measurement complete.' : 'Measurement failed.';
+            } catch (e) {
+                document.getElementById('status').textContent = 'Network error.';
+            }
         }
     </script>
 </body>
+
 </html>
